@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWindowsForms>true</UseWindowsForms>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Mofy\Configuration\IQ.Mofy.Configuration\IQ.Mofy.Configuration.csproj" />
+      <ProjectReference Include="..\..\Mofy\Core\IQ.Mofy.Core\IQ.Mofy.Core.csproj" />
+      <ProjectReference Include="..\..\Mofy\Regify\IQ.Mofy.Regify\IQ.Mofy.Regify.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true"/>
+    </ItemGroup>
+
+</Project>

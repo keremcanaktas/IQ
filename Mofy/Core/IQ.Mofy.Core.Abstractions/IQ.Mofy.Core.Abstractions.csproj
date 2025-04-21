@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-rc.2.24473.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Data\IQ.Mofy.Core.Data.Annotations\IQ.Mofy.Core.Data.Annotations.csproj" />
+    </ItemGroup>
+
+</Project>
