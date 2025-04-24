@@ -1,6 +1,5 @@
 ﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace IQ.Mofy.Core.Extensions.DependencyInjection;
 
@@ -89,83 +88,44 @@ public static class ServiceCollectionExtensions
     #endregion
 
 
-    public static IServiceCollection Append(this IServiceCollection self, ServiceDescriptor serviceDescriptor)
+    private static IServiceCollection Append(this IServiceCollection self, ServiceDescriptor serviceDescriptor)
     {
-        void Configure()
+        if (!typeof(IHasServiceCollectionItem).IsAssignableFrom(serviceDescriptor.GetImplementationType() ?? serviceDescriptor.ServiceType))
         {
-            if (!typeof(IHasServiceItem).IsAssignableFrom(serviceDescriptor.ImplementationType)) return;
-
-            self.Add(ServiceDescriptor.DescribeKeyed(serviceDescriptor.ServiceType, $"{nameof(IHasServiceItem)}{serviceDescriptor.ServiceKey}", serviceDescriptor.ImplementationType, serviceDescriptor.Lifetime));
-            self.Replace(ServiceDescriptor.Describe(serviceDescriptor.ServiceType, sp => GetImplementation(sp, self, serviceDescriptor.ServiceType, serviceDescriptor.ServiceKey), serviceDescriptor.Lifetime));
+            self.Add(serviceDescriptor);
+            return self;
         }
 
-        void ConfigureKeyed()
-        {
-            if (!serviceDescriptor.IsKeyedService) return;
+        if (serviceDescriptor.GetImplementationInstance() is IHasServiceCollection hasServiceCollection) hasServiceCollection.ServiceCollection = self;
 
-            if (!typeof(IHasServiceItem).IsAssignableFrom(serviceDescriptor.KeyedImplementationType)) return;
-
-            self.Add(ServiceDescriptor.DescribeKeyed(serviceDescriptor.ServiceType, $"{nameof(IHasServiceItem)}{serviceDescriptor.ServiceKey}", serviceDescriptor.KeyedImplementationType, serviceDescriptor.Lifetime));
-            self.Replace(ServiceDescriptor.DescribeKeyed(serviceDescriptor.ServiceType, serviceDescriptor.ServiceKey, (sp, key) => GetImplementation(sp, self, serviceDescriptor.ServiceType, key), serviceDescriptor.Lifetime));
-        }
-
-        void ConfigureFactory()
-        {
-            if (!typeof(IHasServiceItem).IsAssignableFrom(serviceDescriptor.ServiceType)) return;
-
-            self.Add(ServiceDescriptor.DescribeKeyed(serviceDescriptor.ServiceType, $"{nameof(IHasServiceItem)}{serviceDescriptor.ServiceKey}", (sp, key) => serviceDescriptor.ImplementationFactory?.Invoke(sp)!, serviceDescriptor.Lifetime));
-            self.Replace(ServiceDescriptor.Describe(serviceDescriptor.ServiceType, sp => GetImplementation(sp, self, serviceDescriptor.ServiceType, serviceDescriptor.ServiceKey), serviceDescriptor.Lifetime));
-        }
-
-        void ConfigureFactoryKeyed()
-        {
-            if (!serviceDescriptor.IsKeyedService) return;
-
-            if (!typeof(IHasServiceItem).IsAssignableFrom(serviceDescriptor.ServiceType)) return;
-
-            self.Add(ServiceDescriptor.DescribeKeyed(serviceDescriptor.ServiceType, $"{nameof(IHasServiceItem)}_{serviceDescriptor.ServiceKey}", (sp, key) => serviceDescriptor.KeyedImplementationFactory?.Invoke(sp, serviceDescriptor.ServiceKey)!, serviceDescriptor.Lifetime));
-            self.Replace(ServiceDescriptor.DescribeKeyed(serviceDescriptor.ServiceType, serviceDescriptor.ServiceKey, (sp, key) => GetImplementation(sp, self, serviceDescriptor.ServiceType, key), serviceDescriptor.Lifetime));
-        }
-
-        void ConfigureSingletonInstance()
-        {
-            if (serviceDescriptor.IsKeyedService)
-            {
-                ConfigureInstance(serviceDescriptor.KeyedImplementationInstance, self);
-                return;
-            }
-
-            ConfigureInstance(serviceDescriptor.ImplementationInstance, self);
-        }
-
-        Configure();
-        ConfigureKeyed();
-        ConfigureFactory();
-        ConfigureFactoryKeyed();
-        ConfigureSingletonInstance();
-
-        self.TryAdd(serviceDescriptor);
-
+        self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: (sp, k) => sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
         return self;
     }
 
-    static void ConfigureInstance(object? instance, IServiceCollection serviceCollection, IServiceProvider? serviceProvider = null)
+    private static object GetInstance(this IServiceProvider serviceProvider, ServiceDescriptor serviceDescriptor)
     {
-        if (instance is null) return;
+        var instance = serviceDescriptor.ImplementationInstance
+                       ?? serviceDescriptor.ImplementationFactory?.Invoke(serviceProvider)
+                       ?? (serviceDescriptor.ImplementationType is not null ? ActivatorUtilities.CreateInstance(serviceProvider, serviceDescriptor.ImplementationType) : null);
 
-        if (instance is IHasServiceCollection hasServiceCollection)
-            hasServiceCollection.ServiceCollection = serviceCollection;
+        if (serviceDescriptor.IsKeyedService)
+            instance ??= serviceDescriptor.KeyedImplementationInstance
+                         ?? serviceDescriptor.KeyedImplementationFactory?.Invoke(serviceProvider, serviceDescriptor.ServiceKey)
+                         ?? (serviceDescriptor.KeyedImplementationType is not null ? ActivatorUtilities.CreateInstance(serviceProvider, serviceDescriptor.KeyedImplementationType) : null);
 
-        if (serviceProvider is not null && instance is IHasServiceProvider hasServiceProvider)
-            hasServiceProvider.ServiceProvider = serviceProvider;
-    }
+        AddServiceItems();
 
-    static object GetImplementation(IServiceProvider serviceProvider, IServiceCollection serviceCollection, Type serviceType, object? serviceKey)
-    {
-        var instance = serviceProvider.GetRequiredKeyedService(serviceType, $"{nameof(IHasServiceItem)}{serviceKey}");
+        return instance!;
 
-        ConfigureInstance(instance, serviceCollection, serviceProvider);
+        void AddServiceItems()
+        {
+            if (instance is IHasServiceCollection hasServiceCollection)
+                hasServiceCollection.ServiceCollection = serviceProvider.GetService<IServiceCollection>()!;
+            if (instance is IHasServiceProvider hasServiceProvider)
+                hasServiceProvider.ServiceProvider = serviceProvider;
 
-        return instance;
+            foreach (var serviceItemDecorator in serviceProvider.GetServices<IServiceCollectionItemDecorator>())
+                serviceItemDecorator.Decorate(serviceProvider, instance);
+        }
     }
 }

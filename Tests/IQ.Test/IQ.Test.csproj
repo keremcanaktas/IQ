@@ -5,13 +5,13 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>default</LangVersion>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\Mofy\Configuration\IQ.Mofy.Configuration\IQ.Mofy.Configuration.csproj" />
       <ProjectReference Include="..\..\Mofy\Core\IQ.Mofy.Core\IQ.Mofy.Core.csproj" />
-      <ProjectReference Include="..\..\Mofy\Regify\IQ.Mofy.Regify\IQ.Mofy.Regify.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true"/>
+      <ProjectReference Include="..\..\Mofy\Regify\IQ.Mofy.Regify\IQ.Mofy.Regify.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     </ItemGroup>
 
     <ItemGroup>
