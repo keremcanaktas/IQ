@@ -1,5 +1,6 @@
 ﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace IQ.Mofy.Core.Extensions.DependencyInjection;
 
@@ -97,7 +98,7 @@ public static class ServiceCollectionExtensions
         }
 
         self.Add(serviceDescriptor.DescribeWithKey());
-        self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: GetInstance, lifetime: serviceDescriptor.Lifetime));
+        self.Replace(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: GetInstance, lifetime: serviceDescriptor.Lifetime));
 
         return self;
     }
@@ -114,17 +115,10 @@ public static class ServiceCollectionExtensions
 
         void AddServiceItems()
         {
-            switch (instance)
-            {
-                case null:
-                    return;
-                case IHasServiceCollection hasServiceCollection:
-                    hasServiceCollection.ServiceCollection = serviceProvider.GetRequiredService<IServiceCollection>();
-                    break;
-                case IHasServiceProvider hasServiceProvider:
-                    hasServiceProvider.ServiceProvider = serviceProvider;
-                    break;
-            }
+            if (instance is IHasServiceCollection hasServiceCollection)
+                hasServiceCollection.ServiceCollection = serviceProvider.GetRequiredService<IServiceCollection>();
+            if (instance is IHasServiceProvider hasServiceProvider)
+                hasServiceProvider.ServiceProvider = serviceProvider;
         }
     }
 }
