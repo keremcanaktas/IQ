@@ -1,6 +1,7 @@
-using System.Collections.Immutable;
 using IQ.Mofy.Regify.Visitors;
 using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ConvertIfStatementToReturnStatement
 
@@ -18,7 +19,7 @@ public static class AnalyzerExtensions
 
     public static IEnumerable<INamespaceOrTypeSymbol> GetAllAssemblyGlobalNameSpaceMembers(this Compilation compilation)
     {
-        return  compilation
+        return compilation
             .GetAllAssemblySymbols()
             .SelectMany(assemblySymbol => assemblySymbol.GlobalNamespace.GetMembers());
     }
@@ -29,11 +30,11 @@ public static class AnalyzerExtensions
             .GetAllAssemblyGlobalNameSpaceMembers()
             .SelectMany(GetTypeSymbols);
     }
-    
+
     public static IEnumerable<ITypeSymbol> GetTypeSymbols(this INamespaceOrTypeSymbol namespaceOrTypeSymbol)
     {
         var visitor = new TypeSymbolFinderVisitor();
-        
+
         visitor.Visit(namespaceOrTypeSymbol);
 
         return visitor.Types;
@@ -43,7 +44,7 @@ public static class AnalyzerExtensions
 
     private static bool FindAttribute(this ITypeSymbol? typeSymbol, string name)
     {
-        if(typeSymbol == null) return false;
+        if (typeSymbol == null) return false;
 
         if (typeSymbol.ToDisplayString() == name) return true;
 
@@ -51,19 +52,27 @@ public static class AnalyzerExtensions
     }
 
     public static AttributeData? GetAttribute(this ISymbol symbol, string name) => symbol.GetAttributes(name).FirstOrDefault();
-    
+
+
+    public static ImmutableArray<ITypeSymbol> GetAttributeGenericArguments(this AttributeData? attributeData)
+    {
+        if (!(attributeData?.AttributeClass?.IsGenericType ?? false)) return [];
+
+        return attributeData.AttributeClass.TypeArguments;
+    }
+
     public static TypedConstant? GetAttributeValue(this AttributeData? attributeData, string key, Func<ImmutableArray<TypedConstant>, TypedConstant>? constructorArgumentSelector = null)
     {
         if (attributeData is null) return null;
-        
+
         var typedConstant = attributeData.NamedArguments.FirstOrDefault(na => na.Key == key).Value;
         if (typedConstant.Kind != TypedConstantKind.Error) return typedConstant;
 
         return constructorArgumentSelector?.Invoke(attributeData.ConstructorArguments) ?? default;
     }
-    
+
     public static TValue? GetTypedConstantValue<TValue>(this TypedConstant typedConstant) => TryCast<TValue>(typedConstant.Value, out var castedValue) ? castedValue : default;
-    
+
     public static IEnumerable<TValue> GetTypedConstantValues<TValue>(this TypedConstant typedConstant)
     {
         if (typedConstant.Kind != TypedConstantKind.Array) return [];
@@ -81,7 +90,7 @@ public static class AnalyzerExtensions
                 result = (T)Enum.Parse(type, value?.ToString() ?? string.Empty);
                 return true;
             }
-            
+
             switch (value)
             {
                 case null:

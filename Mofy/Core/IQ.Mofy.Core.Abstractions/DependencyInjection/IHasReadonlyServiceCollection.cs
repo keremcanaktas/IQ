@@ -2,7 +2,7 @@
 
 namespace IQ.Mofy.Core.Abstractions.DependencyInjection;
 
-public interface IHasReadonlyServiceCollection
+public interface IHasReadonlyServiceCollection : IHasServiceCollectionItem
 {
     public IServiceCollection ServiceCollection { get; }
 }
