@@ -9,14 +9,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Mofy\Configuration\IQ.Mofy.Configuration\IQ.Mofy.Configuration.csproj" />
-      <ProjectReference Include="..\..\Mofy\Regify\IQ.Mofy.Regify\IQ.Mofy.Regify.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true"/>
+      <ProjectReference Include="..\..\Mofy\Regify\IQ.Mofy.Regify\IQ.Mofy.Regify.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
       <ProjectReference Include="..\..\Mofy\Web\Api\IQ.Mofy.Web.Api\IQ.Mofy.Web.Api.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore">
-        <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\9.0.0\Microsoft.AspNetCore.dll</HintPath>
-      </Reference>
     </ItemGroup>
 
     <ItemGroup>
