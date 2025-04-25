@@ -1,4 +1,5 @@
-using IQ.Mofy.Regify.Extensions;
+using IQ.Mofy.Core.App;
+using Application = System.Windows.Forms.Application;
 
 namespace IQ.WindowsApplication.Test;
 
@@ -9,10 +10,10 @@ static class Program
     {
         var application = new Mofy.Core.App.Application();
 
-        application.UseRegify();
+        application.ServiceCollection.AddRegify();
 
         await application.RunAsync();
-        
+
         Application.Run(new Form1());
     }
 }
