@@ -1,9 +1,11 @@
 ﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
 using IQ.Mofy.Core.Extensions;
+using IQ.Mofy.Core.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using WebApplication = IQ.Mofy.Web.App.WebApplication;
@@ -29,6 +31,12 @@ public class WebApiApplication(WebApplicationBuilder webApplicationBuilder) : We
     #endregion
 
     #region IApplication
+
+    protected override Task OnInitializingAsync()
+    {
+        ServiceCollection.AddSingleton<IConfiguration>(HostApplicationBuilder.Configuration);
+        return base.OnInitializingAsync();
+    }
 
     protected override Task CreateServiceProviderAsync()
     {

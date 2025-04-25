@@ -25,7 +25,3 @@ scope.Dispose();
 
 
 Console.Write(carRepository);
-
-
-
-public class MyServiceProviderFactory 

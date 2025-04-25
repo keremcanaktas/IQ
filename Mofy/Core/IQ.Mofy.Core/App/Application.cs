@@ -88,14 +88,23 @@ public class Application : AsyncDisposable,
             ServiceCollection.AddSingleton<IApplication>(this);
             ServiceCollection.AddSingleton(ServiceCollection);
 
+            await OnInitializingAsync();
+
             var tasks = ServiceCollection.GetServiceCollection<IApplicationInitializeStep>().Select(i => i.OnInitializeAsync(this));
             await Task.WhenAll(tasks);
+
+            await OnInitializedAsync();
         }
         catch (Exception exception)
         {
             Debug.WriteLine(exception);
         }
     }
+
+    protected virtual Task OnInitializingAsync() => Task.CompletedTask;
+
+    protected virtual Task OnInitializedAsync() => Task.CompletedTask;
+
 
     protected virtual Task OnPreRunAsync()
     {
