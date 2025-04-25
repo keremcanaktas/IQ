@@ -18,7 +18,7 @@ var scope = application.ServiceProvider.CreateScope();
 
 var carRepository = scope.ServiceProvider.GetRequiredService<ICarRepository>();
 
-//var car = await carRepository.GetAsync(e => e.Id == 1);
+var car = await carRepository.GetListAsync(e => e.Id == 1);
 
 
 scope.Dispose();

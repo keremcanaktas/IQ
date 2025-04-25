@@ -1,11 +1,8 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
-using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace IQ.Test;
 
-public class CarRepository : Data.Integer.Repository<Car>, ICarRepository, IHasDriver
+public class CarRepository : Data.Integer.Repository<Car>, ICarRepository
 {
     public override Task<Car?> GetAsync(int id)
     {
@@ -44,22 +41,4 @@ public class CarRepository : Data.Integer.Repository<Car>, ICarRepository, IHasD
     {
         base.ReleaseManagedResources();
     }
-
-    public IDriver Driver { get; set; } = null!;
-}
-
-
-public interface IDriver : ITransient;
-
-public class Driver : IDriver;
-
-
-public interface IHasDriver : IHasServiceCollectionItem
-{
-    public IDriver Driver { get; set; }
-}
-
-public class HasDriverDecorator : ServiceCollectionItemDecorator<IHasDriver>
-{
-    public override void Decorate(IServiceProvider serviceProvider, IHasDriver instance) => instance.Driver = serviceProvider.GetRequiredService<IDriver>();
 }

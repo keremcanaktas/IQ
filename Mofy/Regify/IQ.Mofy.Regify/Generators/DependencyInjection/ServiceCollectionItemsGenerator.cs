@@ -110,7 +110,8 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
 
         else if (serviceSelectorType.HasFlag(ServiceSelectorType.DefaultInterface))
         {
-            var defaultInterface = typeSymbol.AllInterfaces.FirstOrDefault(i => i.Name == $"I{typeSymbol.Name}") ?? typeSymbol.AllInterfaces.FirstOrDefault();
+            var defaultInterface = typeSymbol.Interfaces.FirstOrDefault(i => IsDefaultInterface(typeSymbol.MetadataName, i)) ?? typeSymbol.Interfaces.FirstOrDefault() ?? typeSymbol.AllInterfaces.FirstOrDefault();
+
             if (defaultInterface != null)
                 yield return defaultInterface;
         }
@@ -119,6 +120,13 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
 
         if (typeSymbol.BaseType != null)
             yield return typeSymbol.BaseType;
+    }
+
+    private static bool IsDefaultInterface(string typeName, INamedTypeSymbol interfaceTypeSymbol)
+    {
+        var interfaceName = interfaceTypeSymbol.IsGenericType ? interfaceTypeSymbol.MetadataName.Substring(0, interfaceTypeSymbol.MetadataName.IndexOf('`')) : interfaceTypeSymbol.MetadataName;
+
+        return typeName.EndsWith(interfaceName.StartsWith("I") ? interfaceName.Substring(1) : interfaceName, StringComparison.OrdinalIgnoreCase);
     }
 
     private static string GetAllLifeStyle(ITypeSymbol? typeSymbol)
