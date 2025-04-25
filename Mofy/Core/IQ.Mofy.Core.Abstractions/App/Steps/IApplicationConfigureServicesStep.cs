@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IQ.Mofy.Core.Abstractions.App.Steps;
 
-public interface IApplicationConfigureServicesStep : IStep, IHasSingletonInstance
+public interface IApplicationConfigureServicesStep : IStep, IHasSingletonInstance, IServiceTypeRequired
 {
     public Task OnConfigureServicesAsync(IServiceCollection services);
 }

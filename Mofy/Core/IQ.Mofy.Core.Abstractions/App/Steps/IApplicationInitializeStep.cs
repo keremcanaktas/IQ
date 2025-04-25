@@ -3,7 +3,7 @@ using IQ.Mofy.Core.Abstractions.Fundamentals.Steps;
 
 namespace IQ.Mofy.Core.Abstractions.App.Steps;
 
-public interface IApplicationInitializeStep : IStep, IHasSingletonInstance
+public interface IApplicationInitializeStep : IStep, IHasSingletonInstance, IServiceTypeRequired
 {
     public Task OnInitializeAsync(IApplication application);
 }

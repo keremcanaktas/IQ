@@ -72,9 +72,7 @@ public class Application : AsyncDisposable,
     {
         var serviceProviderFactory = ServiceCollection.GetService<IServiceProviderFactory>() ?? new ServiceProviderFactoryAdapter<IServiceCollection>(new DefaultServiceProviderFactory(new() { ValidateScopes = Options.ValidateScopes, ValidateOnBuild = Options.ValidateOnBuild }));
 
-        var containerBuilder = serviceProviderFactory.CreateBuilder(ServiceCollection);
-
-        ServiceProvider = serviceProviderFactory.CreateServiceProvider(containerBuilder);
+        ServiceProvider = serviceProviderFactory.CreateServiceProvider(serviceProviderFactory.CreateBuilder(ServiceCollection));
 
         return Task.CompletedTask;
     }
