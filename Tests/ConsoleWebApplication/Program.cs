@@ -19,12 +19,11 @@ application.HostApplicationBuilder.Configuration.AddInMemoryCollection(new Dicti
 await application.RunAsync();
 
 
-
 public class ApplicationConfigurator : IApplicationConfigureServicesStep
 {
     public Task OnConfigureServicesAsync(IServiceCollection services)
     {
-        services.Configure<AnnotationOptions>(nameof(IQ.Mofy));
+        services.Configure<AnnotationOptions>(key: nameof(IQ.Mofy));
 
         return Task.CompletedTask;
     }
@@ -32,17 +31,11 @@ public class ApplicationConfigurator : IApplicationConfigureServicesStep
 
 
 
-public class CarService : IApplicationPostRunStep
+public class ApplicationPostRunStep : IApplicationPostRunStep
 {
     public Task OnPostRunAsync(IApplication application)
     {
-        (application as WebApiApplication)?
-            .MapGet("/", async (IOptions<AnnotationOptions> applicationOptions, ICarRepository carRepository) =>
-            {
-                return await carRepository.GetListAsync(d => d.Name == applicationOptions.Value.Key);
-            });
-
-
+        (application as WebApiApplication)?.MapGet("/", async (IOptions<AnnotationOptions> applicationOptions, ICarRepository carRepository) => await carRepository.GetListAsync(d => true));
 
         return Task.CompletedTask;
     }

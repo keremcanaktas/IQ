@@ -23,7 +23,7 @@ public sealed class ServiceCollectionItemDescriptor
 
     private string HasKey => !string.IsNullOrWhiteSpace(InternalKey) ? "Keyed" : string.Empty;
 
-    private bool HasSingletonInstance => TypeSymbol.AllInterfaces.Any(t => t.ToDisplayString() == Constants.HasSingletonInstanceName);
+    private bool HasSingletonInstance => TypeSymbol.AllInterfaces.Any(t => t.ToDisplayString() == Constants.SingletonInstanceName);
 
     private string GenericArguments => $"{ServiceTypeName}{(ServiceTypeName != ImplementationTypeName ? $", {ImplementationTypeName}" : string.Empty)}";
 

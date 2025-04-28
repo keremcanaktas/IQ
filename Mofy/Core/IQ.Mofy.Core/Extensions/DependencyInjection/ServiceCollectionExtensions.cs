@@ -1,5 +1,8 @@
 ﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
+using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+using IQ.Mofy.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq.Expressions;
 
 namespace IQ.Mofy.Core.Extensions.DependencyInjection;
 
@@ -90,7 +93,9 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection Append(this IServiceCollection self, ServiceDescriptor serviceDescriptor)
     {
-        if (!typeof(IHasServiceCollectionItem).IsAssignableFrom(serviceDescriptor.GetImplementationType() ?? serviceDescriptor.ServiceType))
+        var implementationType = serviceDescriptor.GetImplementationType() ?? serviceDescriptor.ServiceType;
+
+        if (!typeof(IHasServiceCollectionItem).IsAssignableFrom(implementationType))
         {
             self.Add(serviceDescriptor);
             return self;
@@ -98,8 +103,19 @@ public static class ServiceCollectionExtensions
 
         if (serviceDescriptor.GetImplementationInstance() is IHasServiceCollection hasServiceCollection) hasServiceCollection.ServiceCollection = self;
 
-        self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: (sp, k) => sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
-        return self;
+        if (typeof(ISingletonInstance).IsAssignableFrom(implementationType))
+            return Add<ISingletonInstance>();
+
+        return Add<object>();
+        
+        IServiceCollection Add<TImplementation>() where TImplementation : class
+        {
+            if(!serviceDescriptor.IsKeyedService)
+                self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, factory: new Func<IServiceProvider, TImplementation>(sp => (TImplementation)sp.GetInstance(serviceDescriptor)), lifetime: serviceDescriptor.Lifetime));
+            else
+                self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: new Func<IServiceProvider, object?, TImplementation>((sp, k) => (TImplementation)sp.GetInstance(serviceDescriptor)), lifetime: serviceDescriptor.Lifetime));
+            return self;
+        }
     }
 
     private static object GetInstance(this IServiceProvider serviceProvider, ServiceDescriptor serviceDescriptor)
@@ -121,6 +137,9 @@ public static class ServiceCollectionExtensions
         {
             if (instance is IHasServiceCollection hasServiceCollection)
                 hasServiceCollection.ServiceCollection = serviceProvider.GetService<IServiceCollection>()!;
+
+            if (serviceProvider is IEmptyServiceProvider) return;
+
             if (instance is IHasServiceProvider hasServiceProvider)
                 hasServiceProvider.ServiceProvider = serviceProvider;
 

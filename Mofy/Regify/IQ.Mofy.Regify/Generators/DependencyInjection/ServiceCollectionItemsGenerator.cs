@@ -44,6 +44,8 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
         if (typeSymbol.IsAbstract) return false;
         if (typeSymbol is INamedTypeSymbol { IsGenericType: true }) return false;
 
+        if (typeSymbol.Interfaces.Any(i => i.ToDisplayString() == Constants.IgnoredServiceName)) return false;
+
         return typeSymbol.AllInterfaces.Any(i => i.ToDisplayString() == Constants.ServiceCollectionItemName);
     }
 
@@ -91,7 +93,7 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
         foreach (var type in serviceTypes)
             yield return type;
 
-        var serviceTypeRequires = typeSymbol.AllInterfaces.Where(i => i.AllInterfaces.Any(ii => ii.ToDisplayString() == Constants.ServiceTypeRequiredName)).ToList();
+        var serviceTypeRequires = typeSymbol.AllInterfaces.Where(i => i.AllInterfaces.Any(ii => ii.ToDisplayString() == Constants.RequiredServiceName)).ToList();
         var inServiceTypeRequires = serviceTypeRequires.Where(i => !i.AllInterfaces.Any(ix => serviceTypeRequires.Contains(ix, SymbolEqualityComparer.Default))).ToList();
 
         foreach (var inServiceTypeRequire in inServiceTypeRequires)

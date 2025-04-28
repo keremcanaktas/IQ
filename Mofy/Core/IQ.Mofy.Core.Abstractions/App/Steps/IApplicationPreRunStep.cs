@@ -1,9 +1,8 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
-using IQ.Mofy.Core.Abstractions.Fundamentals.Steps;
+﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
 
 namespace IQ.Mofy.Core.Abstractions.App.Steps;
 
-public interface IApplicationPreRunStep : IStep, IHasSingletonInstance, IServiceTypeRequired
+public interface IApplicationPreRunStep : IApplicationStep, ISingletonInstance, IRequiredService
 {
     public Task OnPreRunAsync(IApplication application);
 }

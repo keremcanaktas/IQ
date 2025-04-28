@@ -37,4 +37,17 @@ public class CarRepository : EfCoreRepository<Car>, ICarRepository
             new() { Id = 10, Name = "Hyundai" }
         }.Where(predicate.Compile()).ToList());
     }
+
+    protected override void ReleaseManagedResources()
+    {
+        base.ReleaseManagedResources();
+    }
+}
+
+public class MercedesRepository : CarRepository, IMercedesRepository
+{
+    protected override void ReleaseManagedResources()
+    {
+        base.ReleaseManagedResources();
+    }
 }

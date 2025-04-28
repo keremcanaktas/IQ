@@ -2,7 +2,7 @@
 
 namespace IQ.Mofy.Core.Abstractions.DependencyInjection;
 
-public interface IServiceCollectionItemDecorator : ISingleton, IServiceTypeRequired
+public interface IServiceCollectionItemDecorator : ISingleton, IRequiredService
 {
     void Decorate(IServiceProvider serviceProvider, object? instance);
 }
