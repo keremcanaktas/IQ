@@ -1,4 +1,5 @@
 ﻿using IQ.Mofy.Core.App;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IQ.Mofy.Web.App;
 

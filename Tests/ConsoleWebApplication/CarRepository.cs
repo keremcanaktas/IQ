@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using ConsoleWebApplication.Data.Integer;
 
 namespace ConsoleWebApplication;
@@ -34,6 +35,6 @@ public class CarRepository : EfCoreRepository<Car>, ICarRepository
             new() { Id = 8, Name = "Nissan" },
             new() { Id = 9, Name = "Volkswagen" },
             new() { Id = 10, Name = "Hyundai" }
-        });
+        }.Where(predicate.Compile()).ToList());
     }
 }

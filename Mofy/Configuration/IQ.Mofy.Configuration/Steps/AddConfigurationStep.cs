@@ -1,5 +1,4 @@
-﻿using IQ.Mofy.Configuration.Extensions;
-using IQ.Mofy.Core.Abstractions.App;
+﻿using IQ.Mofy.Core.Abstractions.App;
 using IQ.Mofy.Core.Abstractions.App.Steps;
 using Microsoft.Extensions.Configuration;
 

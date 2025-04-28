@@ -4,7 +4,6 @@ using ConsoleWebApplication;
 using IQ.Mofy.Core.Abstractions.App;
 using IQ.Mofy.Core.Abstractions.App.Steps;
 using IQ.Mofy.Core.App;
-using IQ.Mofy.Core.Extensions;
 using IQ.Mofy.Web.Api.App;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +14,7 @@ var application = new WebApiApplication(WebApplication.CreateSlimBuilder(args));
 
 application.ServiceCollection.AddRegify();
 
-application.HostApplicationBuilder.Configuration.AddInMemoryCollection();
+application.HostApplicationBuilder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { { "Mofy:AnnotationOptions:Key", "Test" } });
 
 await application.RunAsync();
 
@@ -25,9 +24,7 @@ public class ApplicationConfigurator : IApplicationConfigureServicesStep
 {
     public Task OnConfigureServicesAsync(IServiceCollection services)
     {
-        var configuration = services.GetRequiredService<IConfiguration>();
-
-        services.Configure<ApplicationOptions>(configuration.GetSection(nameof(ApplicationOptions)));
+        services.Configure<AnnotationOptions>(nameof(IQ.Mofy));
 
         return Task.CompletedTask;
     }
@@ -40,9 +37,9 @@ public class CarService : IApplicationPostRunStep
     public Task OnPostRunAsync(IApplication application)
     {
         (application as WebApiApplication)?
-            .MapGet("/GetCarList", async (IOptions<ApplicationOptions> applicationOptions, ICarRepository carRepository) =>
+            .MapGet("/", async (IOptions<AnnotationOptions> applicationOptions, ICarRepository carRepository) =>
             {
-                return await carRepository.GetListAsync(d => true);
+                return await carRepository.GetListAsync(d => d.Name == applicationOptions.Value.Key);
             });
 
 
@@ -55,4 +52,9 @@ public class CarService : IApplicationPostRunStep
 class ApplicationOptions
 {
     public string Name { get; set; }
+}
+
+public class AnnotationOptions
+{
+    public string? Key { get; set; }
 }
