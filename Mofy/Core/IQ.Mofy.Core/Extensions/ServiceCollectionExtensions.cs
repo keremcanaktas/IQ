@@ -1,9 +1,6 @@
 ﻿using IQ.Mofy.Core.Abstractions.App;
-using IQ.Mofy.Core.Abstractions.DependencyInjection;
-using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
-using IQ.Mofy.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace IQ.Mofy.Core.Extensions;
@@ -16,26 +13,16 @@ public static class ServiceCollectionExtensions
 
 
     public static T GetRequiredService<T>(this IServiceCollection self) => (T)self.GetRequiredService(typeof(T));
-    
+
     public static object GetRequiredService(this IServiceCollection self, Type type) => self.GetService(type) ?? throw new InvalidOperationException($"No service for type '{type.Name}' has been registered.");
 
 
     public static IEnumerable<T> GetServices<T>(this IServiceCollection self) => self.GetServices(typeof(T)).Cast<T>();
-    
+
     public static ICollection<T> GetServiceCollection<T>(this IServiceCollection self) => [.. self.GetServices<T>()];
 
-    public static IEnumerable<object?> GetServices(this IServiceCollection self, Type type)
-    {
-        foreach(var serviceDescriptor in self.Where(s => s.ServiceType == type))
-        {
-            if (serviceDescriptor?.ImplementationInstance is not null) 
-                yield return serviceDescriptor.ImplementationInstance;
-
-            else if (typeof(ISingletonInstance).IsAssignableFrom(serviceDescriptor?.GetImplementationType()))
-                yield return serviceDescriptor.ImplementationFactory?.Invoke(EmptyServiceProvider.Instance);
-        }
-    }
+    public static IEnumerable<object?> GetServices(this IServiceCollection self, Type type) => self.Where(s => s.ServiceType == type).Select(serviceDescriptor => serviceDescriptor.ProduceImplementationInstance());
 
 
-    public static IApplication GetApplication(this  IServiceCollection self) => self.GetRequiredService<IApplication>();
+    public static IApplication GetApplication(this IServiceCollection self) => self.GetRequiredService<IApplication>();
 }

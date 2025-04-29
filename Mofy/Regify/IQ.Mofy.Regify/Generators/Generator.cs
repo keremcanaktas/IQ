@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace IQ.Mofy.Regify.Generators;

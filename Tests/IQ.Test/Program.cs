@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using IQ.Mofy.Configuration.Extensions;
 using IQ.Mofy.Core.App;
 using IQ.Test;
 using Microsoft.Extensions.DependencyInjection;

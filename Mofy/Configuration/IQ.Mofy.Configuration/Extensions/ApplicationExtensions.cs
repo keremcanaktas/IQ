@@ -1,7 +1,7 @@
 ﻿using IQ.Mofy.Core.Abstractions.App;
-using IQ.Mofy.Core.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+// ReSharper disable CheckNamespace
 
 namespace Microsoft.Extensions.Configuration;
 

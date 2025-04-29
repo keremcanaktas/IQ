@@ -1,4 +1,5 @@
 ﻿// ReSharper disable CheckNamespace
+
 namespace System;
 
 public static class StringExtensions

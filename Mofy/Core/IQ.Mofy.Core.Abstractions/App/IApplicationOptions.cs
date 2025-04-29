@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace IQ.Mofy.Core.Abstractions.App;
+﻿namespace IQ.Mofy.Core.Abstractions.App;
 
 public interface IApplicationOptions
 {

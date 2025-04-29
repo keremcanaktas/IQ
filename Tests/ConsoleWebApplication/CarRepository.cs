@@ -1,6 +1,5 @@
-﻿using System.Linq;
+﻿using ConsoleWebApplication.Data.Integer;
 using System.Linq.Expressions;
-using ConsoleWebApplication.Data.Integer;
 
 namespace ConsoleWebApplication;
 
@@ -12,10 +11,10 @@ public class CarRepository : EfCoreRepository<Car>, ICarRepository
         {
             Id = id
         };
-        
+
         return Task.FromResult<Car?>(car);
     }
-    
+
     public override Task<List<Car>> GetListAsync(IEnumerable<int> ids)
     {
         return new(() => ids.Select(id => new Car { Id = id }).ToList());

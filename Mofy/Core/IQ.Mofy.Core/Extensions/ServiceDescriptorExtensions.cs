@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+using IQ.Mofy.Core.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
+// ReSharper disable ConvertIfStatementToReturnStatement
 
 namespace IQ.Mofy.Core.Extensions;
 
@@ -18,5 +22,16 @@ public static class ServiceDescriptorExtensions
         if (self is null) return null!;
 
         return self.IsKeyedService ? self.KeyedImplementationInstance : self.ImplementationInstance;
+    }
+
+    public static object? ProduceImplementationInstance(this ServiceDescriptor? self)
+    {
+        if (self?.ImplementationInstance is not null)
+            return self.ImplementationInstance;
+
+        if (typeof(ISingletonInstance).IsAssignableFrom(self?.GetImplementationType()))
+            return self.ImplementationFactory?.Invoke(BlankServiceProvider.Instance);
+
+        return null;
     }
 }

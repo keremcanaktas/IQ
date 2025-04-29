@@ -1,8 +1,8 @@
 ﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
 using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
-using IQ.Mofy.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq.Expressions;
+
+// ReSharper disable ConvertIfStatementToReturnStatement
 
 namespace IQ.Mofy.Core.Extensions.DependencyInjection;
 
@@ -107,13 +107,13 @@ public static class ServiceCollectionExtensions
             return Add<ISingletonInstance>();
 
         return Add<object>();
-        
+
         IServiceCollection Add<TImplementation>() where TImplementation : class
         {
-            if(!serviceDescriptor.IsKeyedService)
-                self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, factory: new Func<IServiceProvider, TImplementation>(sp => (TImplementation)sp.GetInstance(serviceDescriptor)), lifetime: serviceDescriptor.Lifetime));
+            if (!serviceDescriptor.IsKeyedService)
+                self.Add(new(serviceType: serviceDescriptor.ServiceType, factory: sp => (TImplementation)sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
             else
-                self.Add(new ServiceDescriptor(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: new Func<IServiceProvider, object?, TImplementation>((sp, k) => (TImplementation)sp.GetInstance(serviceDescriptor)), lifetime: serviceDescriptor.Lifetime));
+                self.Add(new(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: (sp, _) => (TImplementation)sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
             return self;
         }
     }
@@ -138,7 +138,7 @@ public static class ServiceCollectionExtensions
             if (instance is IHasServiceCollection hasServiceCollection)
                 hasServiceCollection.ServiceCollection = serviceProvider.GetService<IServiceCollection>()!;
 
-            if (serviceProvider is IEmptyServiceProvider) return;
+            if (serviceProvider is IBlankServiceProvider) return;
 
             if (instance is IHasServiceProvider hasServiceProvider)
                 hasServiceProvider.ServiceProvider = serviceProvider;

@@ -1,5 +1,4 @@
-﻿using IQ.Mofy.Core.Abstractions.App;
-using IQ.Mofy.Core.Abstractions.DependencyInjection;
+﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
 using IQ.Mofy.Core.Extensions;
 using IQ.Mofy.Core.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;

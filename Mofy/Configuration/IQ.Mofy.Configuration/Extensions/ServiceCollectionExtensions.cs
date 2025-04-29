@@ -1,7 +1,9 @@
 ﻿using IQ.Mofy.Core.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
+// ReSharper disable MethodOverloadWithOptionalParameter
+// ReSharper disable CheckNamespace
 
 namespace Microsoft.Extensions.Configuration;
 
