@@ -4,7 +4,7 @@ public static class Constants
 {
     internal const string ServiceCollectionItemName = "IQ.Mofy.Core.Abstractions.DependencyInjection.Core.IServiceCollectionItem";
     internal const string IgnoredServiceName = "IQ.Mofy.Core.Abstractions.DependencyInjection.Core.IIgnoredService";
-    internal const string RequiredServiceName = "IQ.Mofy.Core.Abstractions.DependencyInjection.IRequiredService";
+    internal const string RequiredServiceName = "IQ.Mofy.Core.Abstractions.DependencyInjection.Core.IRequiredService";
     internal const string SingletonInstanceName = "IQ.Mofy.Core.Abstractions.DependencyInjection.Core.ISingletonInstance";
 
     internal const string ServiceTypesAttributeName = "IQ.Mofy.Core.Data.Annotations.DependencyInjection.ServiceTypesAttribute";

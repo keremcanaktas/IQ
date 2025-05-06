@@ -1,4 +1,4 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Services;
+﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
 
 namespace IQ.Test.Data;
 

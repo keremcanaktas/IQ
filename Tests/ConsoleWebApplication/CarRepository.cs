@@ -1,4 +1,6 @@
 ﻿using ConsoleWebApplication.Data.Integer;
+using IQ.Mofy.Core.Abstractions.App;
+using IQ.Mofy.Core.Data.Annotations.DependencyInjection;
 using System.Linq.Expressions;
 
 namespace ConsoleWebApplication;
@@ -42,8 +44,8 @@ public class CarRepository : EfCoreRepository<Car>, ICarRepository
         base.ReleaseManagedResources();
     }
 }
-
-public class MercedesRepository : CarRepository, IMercedesRepository
+[ServiceTypes(nameof(IApplication))]
+public class MercedesCarRepository : CarRepository, IMercedesCarRepository
 {
     protected override void ReleaseManagedResources()
     {

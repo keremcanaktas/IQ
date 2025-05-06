@@ -9,8 +9,9 @@ public enum ServiceSelectorType
     None = 0,
     Self = 1,
     DefaultInterface = 2,
-    AllInterface = DefaultInterface << 1,
-    All = Self | DefaultInterface | AllInterface
+    Interfaces = DefaultInterface << 1,
+    AllInterfaces = Interfaces << 1,
+    All = Self | DefaultInterface | Interfaces | AllInterfaces
 }
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
@@ -35,7 +36,7 @@ public class ServiceTypesAttribute(params Type[] types) : Attribute
         if (ServiceSelectorType.HasFlag(ServiceSelectorType.Self))
             yield return type;
 
-        if (ServiceSelectorType.HasFlag(ServiceSelectorType.AllInterface))
+        if (ServiceSelectorType.HasFlag(ServiceSelectorType.AllInterfaces))
         {
             foreach (var @interface in type.GetInterfaces())
                 yield return @interface;
@@ -56,5 +57,5 @@ public class ServiceTypesAttribute(params Type[] types) : Attribute
 public class ServiceTypesAttribute<T> : ServiceTypesAttribute
 {
     public ServiceTypesAttribute(params Type[] types) : base(types) { }
-    public ServiceTypesAttribute(object key, params Type[] types) : base(key, types.Concat([typeof(T)]).ToArray()) { }
+    public ServiceTypesAttribute(object key, params Type[] types) : base(key, [.. types, typeof(T)]) { }
 }

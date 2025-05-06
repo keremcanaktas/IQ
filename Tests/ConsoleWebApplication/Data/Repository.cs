@@ -6,7 +6,9 @@ namespace ConsoleWebApplication.Data;
 public abstract class Repository<T> : AsyncDisposable, IRepository<T> where T : class, IEntity
 {
     public virtual Task<T?> GetAsync(Expression<Func<T, bool>> predicate) => Task.FromResult(default(T));
+
     public virtual Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate) => Task.FromResult(new List<T>());
+    
     public virtual Task<IQueryable<T>> GetQueryableAsync() => Task.FromResult(Enumerable.Empty<T>().AsQueryable());
 
     public virtual Task AddAsync(T entity) => Task.CompletedTask;

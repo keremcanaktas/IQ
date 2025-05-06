@@ -93,21 +93,20 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
         foreach (var type in serviceTypes)
             yield return type;
 
-        var serviceTypeRequires = typeSymbol.AllInterfaces.Where(i => i.AllInterfaces.Any(ii => ii.ToDisplayString() == Constants.RequiredServiceName)).ToList();
-        var inServiceTypeRequires = serviceTypeRequires.Where(i => !i.AllInterfaces.Any(ix => serviceTypeRequires.Contains(ix, SymbolEqualityComparer.Default))).ToList();
+        if(serviceSelectorType == ServiceSelectorType.None) yield break;
 
-        foreach (var inServiceTypeRequire in inServiceTypeRequires)
-            yield return inServiceTypeRequire;
-
-
-        if (serviceTypes.Count != 0)
-            serviceSelectorType = ServiceSelectorType.None;
+        foreach (var requiredService in typeSymbol.AllInterfaces.Where(i => i.Interfaces.Any(ii => ii.ToDisplayString() == Constants.RequiredServiceName)))
+            yield return requiredService;
 
         if (serviceSelectorType.HasFlag(ServiceSelectorType.Self))
             yield return typeSymbol;
 
-        if (serviceSelectorType.HasFlag(ServiceSelectorType.AllInterface))
+        if (serviceSelectorType.HasFlag(ServiceSelectorType.AllInterfaces))
             foreach (var @interface in typeSymbol.AllInterfaces)
+                yield return @interface;
+
+        else if (serviceSelectorType.HasFlag(ServiceSelectorType.Interfaces))
+            foreach (var @interface in typeSymbol.Interfaces)
                 yield return @interface;
 
         else if (serviceSelectorType.HasFlag(ServiceSelectorType.DefaultInterface))
