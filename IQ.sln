@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mofy", "Mofy", "{FFE583E8-6B71-49EE-9811-CAB9C409DDE4}"
 EndProject
@@ -40,6 +40,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleWebApplication", "Tests\ConsoleWebApplication\ConsoleWebApplication.csproj", "{D4C74FAA-0C8C-4667-A9C5-C78071F5E5DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQ.Mofy.Web", "Mofy\Web\IQ.Mofy.Web\IQ.Mofy.Web.csproj", "{0EF223E9-CAAC-4549-B547-91AF3E054570}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQ.Mofy.Data", "Mofy\Data\IQ.Mofy.Data\IQ.Mofy.Data.csproj", "{78C871D7-1D36-45D1-A3F8-94A57CFF1D1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQ.Mofy.Data.Abstractions", "Mofy\Data\IQ.Mofy.Data.Abstractions\IQ.Mofy.Data.Abstractions.csproj", "{97F30102-22A9-47D0-B6DC-45759073FF1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +97,14 @@ Global
 		{0EF223E9-CAAC-4549-B547-91AF3E054570}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EF223E9-CAAC-4549-B547-91AF3E054570}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EF223E9-CAAC-4549-B547-91AF3E054570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78C871D7-1D36-45D1-A3F8-94A57CFF1D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78C871D7-1D36-45D1-A3F8-94A57CFF1D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78C871D7-1D36-45D1-A3F8-94A57CFF1D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78C871D7-1D36-45D1-A3F8-94A57CFF1D1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F30102-22A9-47D0-B6DC-45759073FF1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F30102-22A9-47D0-B6DC-45759073FF1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F30102-22A9-47D0-B6DC-45759073FF1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F30102-22A9-47D0-B6DC-45759073FF1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +127,9 @@ Global
 		{0A57C73C-80C1-4889-9320-5779CAD30C54} = {4674770C-9F9A-486E-9645-FAEDED246622}
 		{D4C74FAA-0C8C-4667-A9C5-C78071F5E5DD} = {811A94B6-E317-4C5C-B046-40995844E4C9}
 		{0EF223E9-CAAC-4549-B547-91AF3E054570} = {10E1E150-27CB-4A8C-93AE-391505B2A732}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {FFE583E8-6B71-49EE-9811-CAB9C409DDE4}
+		{78C871D7-1D36-45D1-A3F8-94A57CFF1D1A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{97F30102-22A9-47D0-B6DC-45759073FF1C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED99A7FC-0BA4-4D95-8915-3F4CE83091BC}

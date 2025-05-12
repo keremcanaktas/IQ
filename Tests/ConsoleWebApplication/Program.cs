@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using ConsoleWebApplication;
-using ConsoleWebApplication.Data;
 using IQ.Mofy.Core.App;
 using IQ.Mofy.Web.Api.App;
 using Microsoft.AspNetCore.Builder;
