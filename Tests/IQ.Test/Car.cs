@@ -1,4 +1,4 @@
-﻿using IQ.Test.Data;
+﻿using IQ.Mofy.Data.Abstractions.Entities;
 
 namespace IQ.Test;
 

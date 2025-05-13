@@ -16,12 +16,14 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddKeyedSingleton<TService>(this IServiceCollection self, object? serviceKey) where TService : class => self.Append(ServiceDescriptor.KeyedSingleton<TService, TService>(serviceKey));
 
-    public static IServiceCollection AddKeyedSingleton<TService, TImplementation>(this IServiceCollection self, object serviceKey)
+    public static IServiceCollection AddKeyedSingleton<TService, TImplementation>(this IServiceCollection self, object? serviceKey)
         where TService : class
         where TImplementation : class, TService
     {
         return self.Append(ServiceDescriptor.KeyedSingleton<TService, TImplementation>(serviceKey));
     }
+
+    public static IServiceCollection AddKeyedSingleton(this IServiceCollection self, Type serviceType, object? serviceKey, Type implementationType) => self.Append(ServiceDescriptor.KeyedSingleton(serviceType, serviceKey, implementationType));
 
     #endregion
 
@@ -36,20 +38,24 @@ public static class ServiceCollectionExtensions
         return self.Append(ServiceDescriptor.Singleton<TService, TImplementation>());
     }
 
+    public static IServiceCollection AddSingleton(this IServiceCollection self, Type serviceType, Type implementationType) => self.Append(ServiceDescriptor.Singleton(serviceType, implementationType));
+
     #endregion
 
     #region AddTransient
 
     #region Keyed
 
-    public static IServiceCollection AddKeyedTransient<TService>(this IServiceCollection self, object serviceKey) where TService : class => self.Append(ServiceDescriptor.KeyedTransient<TService, TService>(serviceKey));
+    public static IServiceCollection AddKeyedTransient<TService>(this IServiceCollection self, object? serviceKey) where TService : class => self.Append(ServiceDescriptor.KeyedTransient<TService, TService>(serviceKey));
 
-    public static IServiceCollection AddKeyedTransient<TService, TImplementation>(this IServiceCollection self, object serviceKey)
+    public static IServiceCollection AddKeyedTransient<TService, TImplementation>(this IServiceCollection self, object? serviceKey)
         where TService : class
         where TImplementation : class, TService
     {
         return self.Append(ServiceDescriptor.KeyedTransient<TService, TImplementation>(serviceKey));
     }
+
+    public static IServiceCollection AddKeyedTransient(this IServiceCollection self, Type serviceType, object? serviceKey, Type implementationType) => self.Append(ServiceDescriptor.KeyedTransient(serviceType, serviceKey, implementationType));
 
     #endregion
 
@@ -62,20 +68,24 @@ public static class ServiceCollectionExtensions
         return self.Append(ServiceDescriptor.Transient<TService, TImplementation>());
     }
 
+    public static IServiceCollection AddTransient(this IServiceCollection self, Type serviceType, Type implementationType) => self.Append(ServiceDescriptor.Transient(serviceType, implementationType));
+
     #endregion
 
     #region AddScoped
 
     #region Keyed
 
-    public static IServiceCollection AddKeyedScoped<TService>(this IServiceCollection self, object serviceKey) where TService : class => self.Append(ServiceDescriptor.KeyedScoped<TService, TService>(serviceKey));
+    public static IServiceCollection AddKeyedScoped<TService>(this IServiceCollection self, object? serviceKey) where TService : class => self.Append(ServiceDescriptor.KeyedScoped<TService, TService>(serviceKey));
 
-    public static IServiceCollection AddKeyedScoped<TService, TImplementation>(this IServiceCollection self, object serviceKey)
+    public static IServiceCollection AddKeyedScoped<TService, TImplementation>(this IServiceCollection self, object? serviceKey)
         where TService : class
         where TImplementation : class, TService
     {
         return self.Append(ServiceDescriptor.KeyedScoped<TService, TImplementation>(serviceKey));
     }
+
+    public static IServiceCollection AddKeyedScoped(this IServiceCollection self, Type serviceType, object? serviceKey, Type implementationType) => self.Append(ServiceDescriptor.KeyedScoped(serviceType, serviceKey, implementationType));
 
     #endregion
 
@@ -88,34 +98,36 @@ public static class ServiceCollectionExtensions
         return self.Append(ServiceDescriptor.Scoped<TService, TImplementation>());
     }
 
+    public static IServiceCollection AddScoped(this IServiceCollection self, Type serviceType, Type implementationType) => self.Append(ServiceDescriptor.Scoped(serviceType, implementationType));
+
     #endregion
 
 
     private static IServiceCollection Append(this IServiceCollection self, ServiceDescriptor serviceDescriptor)
     {
-        var implementationType = serviceDescriptor.GetImplementationType() ?? serviceDescriptor.ServiceType;
+        //var implementationType = serviceDescriptor.GetImplementationType() ?? serviceDescriptor.ServiceType;
 
-        if (!typeof(IHasServiceCollectionItem).IsAssignableFrom(implementationType))
-        {
+        //if (!typeof(IHasServiceCollectionItem).IsAssignableFrom(implementationType))
+        //{
             self.Add(serviceDescriptor);
             return self;
-        }
+        //}
 
-        if (serviceDescriptor.GetImplementationInstance() is IHasServiceCollection hasServiceCollection) hasServiceCollection.ServiceCollection = self;
+        //if (serviceDescriptor.GetImplementationInstance() is IHasServiceCollection hasServiceCollection) hasServiceCollection.ServiceCollection = self;
 
-        if (typeof(ISingletonInstance).IsAssignableFrom(implementationType))
-            return Add<ISingletonInstance>();
+        //if (typeof(ISingletonInstance).IsAssignableFrom(implementationType))
+        //    return Add<ISingletonInstance>();
 
-        return Add<object>();
+        //return Add<object>();
 
-        IServiceCollection Add<TImplementation>() where TImplementation : class
-        {
-            if (!serviceDescriptor.IsKeyedService)
-                self.Add(new(serviceType: serviceDescriptor.ServiceType, factory: sp => (TImplementation)sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
-            else
-                self.Add(new(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: (sp, _) => (TImplementation)sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
-            return self;
-        }
+        //IServiceCollection Add<TImplementation>() where TImplementation : class
+        //{
+        //    if (!serviceDescriptor.IsKeyedService)
+        //        self.Add(new(serviceType: serviceDescriptor.ServiceType, factory: sp => (TImplementation)sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
+        //    else
+        //        self.Add(new(serviceType: serviceDescriptor.ServiceType, serviceKey: serviceDescriptor.ServiceKey, factory: (sp, _) => (TImplementation)sp.GetInstance(serviceDescriptor), lifetime: serviceDescriptor.Lifetime));
+        //    return self;
+        //}
     }
 
     private static object GetInstance(this IServiceProvider serviceProvider, ServiceDescriptor serviceDescriptor)

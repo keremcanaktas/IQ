@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using IQ.Mofy.Core.App;
+using IQ.Mofy.Data.Abstractions.Entities;
 using IQ.Test;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,19 +9,30 @@ var application = new Application();
 
 application.ServiceCollection.AddRegify();
 
+IQ.Mofy.Core.Extensions.DependencyInjection.ServiceCollectionExtensions.AddScoped(application.ServiceCollection, typeof(IRepo<>), typeof(RepoWrapper<>));
+
 
 await application.RunAsync();
 
-var configuration = application.GetConfiguration();
 
-var scope = application.ServiceProvider.CreateScope();
+var serviceScope = application.ServiceProvider.CreateScope();
 
-var carRepository = scope.ServiceProvider.GetRequiredService<ICarRepository>();
+var queryableRepository = serviceScope.ServiceProvider.GetService<IRepo<Car>>();
 
-var car = await carRepository.GetListAsync(e => e.Id == 1);
-
-
-scope.Dispose();
+Console.ReadLine();
 
 
-Console.Write(carRepository);
+public interface IRepo<T> where T : IEntity;
+
+public class Repo<T> : IRepo<T> where T : IEntity
+{
+
+}
+
+public class RepoWrapper<T>: IRepo<T>
+    where T : IEntity
+{
+
+}
+
+

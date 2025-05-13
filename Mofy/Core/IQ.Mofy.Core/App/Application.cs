@@ -71,7 +71,9 @@ public class Application : AsyncDisposable,
 
     protected virtual Task CreateServiceProviderAsync()
     {
-        var serviceProviderFactory = ServiceCollection.GetService<IServiceProviderFactory>() ?? new ServiceProviderFactoryAdapter<IServiceCollection>(new DefaultServiceProviderFactory(new() { ValidateScopes = Options.ValidateScopes, ValidateOnBuild = Options.ValidateOnBuild }));
+        var serviceProviderFactory = ServiceCollection.GetService<IServiceProviderFactory>() ?? new ServiceProviderFactoryAdapter<IServiceCollection>(new DependencyInjection.DefaultServiceProviderFactory(new() { ValidateScopes = Options.ValidateScopes, ValidateOnBuild = Options.ValidateOnBuild }));
+
+        var serviceProviderHandler = ServiceCollection.GetService<IServiceProviderHandler>();
 
         ServiceProvider = serviceProviderFactory.CreateServiceProvider(serviceProviderFactory.CreateBuilder(ServiceCollection));
 

@@ -6,193 +6,103 @@ namespace IQ.Mofy.Data.Abstractions.Repositories;
 
 public interface IRepository : IScoped;
 
-public interface ISupportSpecification<T> where T : class
-{
-    Task<T?> GetAsync(ISpecification<T> specification);
-
-    Task<List<T>> GetListAsync(ISpecification<T> specification);
-}
-
-public interface IReadonlyRepository<T> : IRepository 
+public interface ICreateOnlyRepository<T> : IRepository
     where T : IEntity
 {
-    Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
-
-    Task<List<T>> GetListAsync();
-
-    Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate);
+    Task CreateAsync(T entity, CancellationToken cancellationToken = default);
+    Task CreateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IReadonlyRepository<T, in TId> : IReadonlyRepository<T>
-    where T : IEntity<TId>
-    where TId : IEquatable<TId>
-{
-    Task<T?> GetAsync(TId id);
-
-    Task<List<T>> GetListAsync(IEnumerable<TId> ids);
-}
-
-public interface ICreateRepository<T> : IRepository 
+public interface IReadOnlyRepository<T> : IRepository 
     where T : IEntity
 {
-    Task AddAsync(T entity);
-    Task AddRangeAsync(IEnumerable<T> entities);
+    Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+
+    Task<List<T>> GetListAsync(CancellationToken cancellationToken = default);
+
+    Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 }
 
-public interface IUpdateRepository<T> : IRepository
-    where T : IEntity
+public interface IReadOnlyRepository<T, in TKey> : IReadOnlyRepository<T>
+    where T : IEntity<TKey>
+    where TKey : IEquatable<TKey>
 {
-    Task UpdateAsync(T entity);
-    Task UpdateRangeAsync(IEnumerable<T> entities);
+    Task<T?> GetAsync(TKey key, CancellationToken cancellationToken = default);
+
+    Task<List<T>> GetListAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default);
 }
 
-public interface IDeleteRepository<T> : IRepository
-    where T : IEntity
-{
-    Task DeleteAsync(T entity);
-    Task DeleteRangeAsync(IEnumerable<T> entities);
-}
-
-public interface IDeleteRepository<T, TId> : IDeleteRepository<T>
-    where T : IEntity<TId>
-    where TId : IEquatable<TId>
-{
-    Task DeleteAsync(TId id);
-    Task DeleteRangeAsync(IEnumerable<TId> ids);
-}
-
-
-
-
-public interface IRepository<T> : IReadonlyRepository<T>, ICreateRepository<T>, IUpdateRepository<T>, IDeleteRepository<T> 
+public interface IQueryableRepository<T> : IReadOnlyRepository<T>, IQueryable<T>
     where T : IEntity;
 
-public interface IRepository<T, TId> : IRepository<T>, IDeleteRepository<T, TId> 
-    where T : IEntity<TId> 
-    where TId : IEquatable<TId>;
+public interface IUpdateOnlyRepository<T> : IRepository
+    where T : IEntity
+{
+    Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
+    Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
+}
+
+public interface IDeleteOnlyRepository<T> : IRepository
+    where T : IEntity
+{
+    Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+    Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
+}
+
+public interface IDeleteOnlyRepository<T, TKey> : IDeleteOnlyRepository<T>
+    where T : IEntity<TKey>
+    where TKey : IEquatable<TKey>
+{
+    Task DeleteAsync(TKey key, CancellationToken cancellationToken = default);
+    Task DeleteRangeAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default);
+}
 
 
-public interface IQueryableRepository<T> : IRepository<T>, IQueryable<T>
+
+public interface IRepository<T> : ICreateOnlyRepository<T>, IReadOnlyRepository<T>, IUpdateOnlyRepository<T>, IDeleteOnlyRepository<T>
     where T : IEntity;
 
-public interface IQueryableRepository<T, TId> : IQueryableRepository<T>, IRepository<T, TId>, IQueryable<T>
-    where T : IEntity<TId>
-    where TId : IEquatable<TId>;
+public interface IRepository<T, TKey> : IRepository<T>, IReadOnlyRepository<T, TKey>, IDeleteOnlyRepository<T, TKey>
+    where T : IEntity<TKey>
+    where TKey : IEquatable<TKey>;
 
 
 
-public interface ISpecification<T>
+public interface IImmediateCreateOnlyRepository<T> : ICreateOnlyRepository<T> 
+    where T : IEntity
 {
-    bool IsSatisfiedBy(T obj);
-
-    Expression<Func<T, bool>> ToExpression();
+    new Task CreateAsync(T entity, CancellationToken cancellationToken = default);
+    new Task CreateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-
-
-
-
-
-
-
-public static class Extensions
+public interface IImmediateUpdateOnlyRepository<T> : IUpdateOnlyRepository<T>
+    where T : IEntity
 {
-    public static IQueryable<T> And<T>(this IQueryable<T> self, ISpecification<T> specification) => self.Where(specification.ToExpression());
-
-    public static ISpecification<T> And<T>(this ISpecification<T> self, ISpecification<T> specification) => new AndSpecification<T>(self, specification);
-    public static ISpecification<T> Or<T>(this ISpecification<T> self, ISpecification<T> specification) => new OrSpecification<T>(self, specification);
-    public static ISpecification<T> Equal<T>(this ISpecification<T> self, ISpecification<T> specification) => new EqualSpecification<T>(self, specification);
-    public static ISpecification<T> NotEqual<T>(this ISpecification<T> self, ISpecification<T> specification) => new EqualSpecification<T>(self, specification);
+    new Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
+    new Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-
-public abstract class Specification<T> : ISpecification<T>
+public interface IImmediateDeleteOnlyRepository<T> : IDeleteOnlyRepository<T>
+    where T : IEntity
 {
-    public abstract Expression<Func<T, bool>> ToExpression();
-    public bool IsSatisfiedBy(T entity)
-    {
-        Func<T, bool> predicate = ToExpression().Compile();
-        return predicate(entity);
-    }
+    new Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+    new Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-
-public class AndSpecification<T>(ISpecification<T> left, ISpecification<T> right) : Specification<T>
+public interface IImmediateDeleteOnlyRepository<T, TKey> : IImmediateDeleteOnlyRepository<T>, IDeleteOnlyRepository<T, TKey>
+    where T : IEntity<TKey>
+    where TKey : IEquatable<TKey>
 {
-    public override Expression<Func<T, bool>> ToExpression()
-    {
-        var parameterExpression = Expression.Parameter(typeof(T));
-
-        return Expression.Lambda<Func<T, bool>>((BinaryExpression)new ParameterReplacer(parameterExpression).Visit(Expression.And(left.ToExpression().Body, right.ToExpression().Body)), parameterExpression);
-    }
+    new Task DeleteAsync(TKey key, CancellationToken cancellationToken = default);
+    new Task DeleteRangeAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default);
 }
 
-public class OrSpecification<T>(ISpecification<T> left, ISpecification<T> right) : Specification<T>
+public interface IImmediateRepository<T> : IImmediateCreateOnlyRepository<T>, IImmediateUpdateOnlyRepository<T>, IImmediateDeleteOnlyRepository<T>
+    where T : IEntity;
+
+
+
+public interface ISupportSaveChanges
 {
-    public override Expression<Func<T, bool>> ToExpression()
-    {
-        var parameterExpression = Expression.Parameter(typeof(T));
-
-        return Expression.Lambda<Func<T, bool>>((BinaryExpression)new ParameterReplacer(parameterExpression).Visit(Expression.Or(left.ToExpression().Body, right.ToExpression().Body)), parameterExpression);
-    }
-}
-
-
-public class EqualSpecification<T>(ISpecification<T> left, ISpecification<T> right) : Specification<T>
-{
-    public override Expression<Func<T, bool>> ToExpression()
-    {
-        var parameterExpression = Expression.Parameter(typeof(T));
-
-        return Expression.Lambda<Func<T, bool>>((BinaryExpression)new ParameterReplacer(parameterExpression).Visit(Expression.Equal(left.ToExpression().Body, right.ToExpression().Body)), parameterExpression);
-    }
-}
-
-public class NotEqualSpecification<T>(ISpecification<T> left, ISpecification<T> right) : Specification<T>
-{
-    public override Expression<Func<T, bool>> ToExpression()
-    {
-        var parameterExpression = Expression.Parameter(typeof(T));
-
-        return Expression.Lambda<Func<T, bool>>((BinaryExpression)new ParameterReplacer(parameterExpression).Visit(Expression.NotEqual(left.ToExpression().Body, right.ToExpression().Body)), parameterExpression);
-    }
-}
-
-
-class ParameterReplacer(ParameterExpression parameter) : ExpressionVisitor
-{   
-    protected override Expression VisitParameter(ParameterExpression node) => base.VisitParameter(parameter);
-}
-
-public class Product : IEntity<int>
-{
-    public int Id { get; set; }
-
-    public string? Name { get; set; }
-    
-    public int Count { get; set; }
-}
-
-public class HasStockSpecification : Specification<Product>
-{
-    public override Expression<Func<Product, bool>> ToExpression() => p => p.Count > 0;
-}
-
-public class NameFilterSpecification(string name) : Specification<Product>
-{
-    public override Expression<Func<Product, bool>> ToExpression() => p => p.Name == name;
-}
-
-
-public class Service
-{
-    public Service()
-    {
-        var specification = new HasStockSpecification()
-            .And(new NameFilterSpecification("Pencil"))
-            .Equal(new HasStockSpecification());
-
-
-        new List<Product>().AsQueryable().And(specification);
-    }
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\IQ.Mofy.Core\IQ.Mofy.Core.csproj" />
+    <ProjectReference Include="..\IQ.Mofy.Data.Abstractions\IQ.Mofy.Data.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>
