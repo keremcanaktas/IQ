@@ -111,7 +111,7 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
 
         else if (serviceSelectorType.HasFlag(ServiceSelectorType.DefaultInterface))
         {
-            var defaultInterface = typeSymbol.Interfaces.FirstOrDefault(i => IsDefaultInterface(typeSymbol.MetadataName, i)) ?? typeSymbol.Interfaces.FirstOrDefault() ?? typeSymbol.AllInterfaces.FirstOrDefault();
+            var defaultInterface = typeSymbol.Interfaces.Where(i => !typeSymbol.Interfaces.Any(t => i.Interfaces.Contains(t))).FirstOrDefault(i => IsDefaultInterface(typeSymbol.MetadataName, i)) ?? typeSymbol.Interfaces.FirstOrDefault() ?? typeSymbol.AllInterfaces.FirstOrDefault();
 
             if (defaultInterface != null)
                 yield return defaultInterface;
