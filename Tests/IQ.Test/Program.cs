@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using IQ.Mofy.Core.App;
+using IQ.Mofy.Core.Extensions;
 using IQ.Mofy.Data.Abstractions.Entities;
 using IQ.Test;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +10,7 @@ var application = new Application();
 
 application.ServiceCollection.AddRegify();
 
-IQ.Mofy.Core.Extensions.DependencyInjection.ServiceCollectionExtensions.AddScoped(application.ServiceCollection, typeof(IRepo<>), typeof(RepoWrapper<>));
-
+application.ServiceCollection.AddScoped(typeof(IRepo<>), s => ActivatorUtilities.CreateInstance(s, typeof(Repo<>)));
 
 await application.RunAsync();
 
@@ -34,5 +34,3 @@ public class RepoWrapper<T>: IRepo<T>
 {
 
 }
-
-

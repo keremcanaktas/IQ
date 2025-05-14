@@ -1,7 +1,9 @@
 ﻿using IQ.Mofy.Core.Abstractions.App;
 using IQ.Mofy.Core.Abstractions.App.Steps;
-using IQ.Mofy.Core.Abstractions.DependencyInjection;
 using IQ.Mofy.Core.DependencyInjection;
+using IQ.Mofy.Core.DependencyInjection.Accessors;
+using IQ.Mofy.Core.DependencyInjection.Adapters;
+using IQ.Mofy.Core.DependencyInjection.Extensions;
 using IQ.Mofy.Core.Extensions;
 using IQ.Mofy.Core.Fundamentals.Disposable;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,8 +16,8 @@ namespace IQ.Mofy.Core.App;
 
 public class Application : AsyncDisposable,
     IApplication,
-    IHasServiceCollection,
-    IHasServiceProvider
+    IServiceCollectionAccessor,
+    IServiceProviderAccessor
 {
     #region Ctor
 
@@ -29,13 +31,13 @@ public class Application : AsyncDisposable,
 
     #endregion
 
-    #region IHasServiceCollection
+    #region IServiceCollectionAccessor
 
     public virtual IServiceCollection ServiceCollection { get; set; } = null!;
 
     #endregion
 
-    #region IHasServiceProvider
+    #region IServiceProviderAccessor
 
     public virtual IServiceProvider ServiceProvider { get; set; } = null!;
 
@@ -71,9 +73,7 @@ public class Application : AsyncDisposable,
 
     protected virtual Task CreateServiceProviderAsync()
     {
-        var serviceProviderFactory = ServiceCollection.GetService<IServiceProviderFactory>() ?? new ServiceProviderFactoryAdapter<IServiceCollection>(new DependencyInjection.DefaultServiceProviderFactory(new() { ValidateScopes = Options.ValidateScopes, ValidateOnBuild = Options.ValidateOnBuild }));
-
-        var serviceProviderHandler = ServiceCollection.GetService<IServiceProviderHandler>();
+        var serviceProviderFactory = ServiceProviderFactoryAdapter.CreateOrDefault(ServiceCollection.GetService(typeof(IServiceProviderFactory<>)));
 
         ServiceProvider = serviceProviderFactory.CreateServiceProvider(serviceProviderFactory.CreateBuilder(ServiceCollection));
 

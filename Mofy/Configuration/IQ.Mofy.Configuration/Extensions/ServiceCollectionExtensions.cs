@@ -1,4 +1,5 @@
-﻿using IQ.Mofy.Core.Extensions;
+﻿using IQ.Mofy.Core.DependencyInjection.Extensions;
+using IQ.Mofy.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

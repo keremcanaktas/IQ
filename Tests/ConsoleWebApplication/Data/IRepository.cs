@@ -1,4 +1,5 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
+using IQ.Mofy.Core.Abstractions.DependencyInjection.Descriptors;
 
 namespace ConsoleWebApplication.Data;
 

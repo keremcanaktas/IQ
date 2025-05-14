@@ -1,5 +1,4 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
-using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+﻿using IQ.Mofy.Core.DependencyInjection.Accessors;
 using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable ConvertIfStatementToReturnStatement
@@ -130,33 +129,33 @@ public static class ServiceCollectionExtensions
         //}
     }
 
-    private static object GetInstance(this IServiceProvider serviceProvider, ServiceDescriptor serviceDescriptor)
-    {
-        var instance = serviceDescriptor.ImplementationInstance
-                       ?? serviceDescriptor.ImplementationFactory?.Invoke(serviceProvider)
-                       ?? (serviceDescriptor.ImplementationType is not null ? ActivatorUtilities.CreateInstance(serviceProvider, serviceDescriptor.ImplementationType) : null);
+    //private static object GetInstance(this IServiceProvider serviceProvider, ServiceDescriptor serviceDescriptor)
+    //{
+    //    var instance = serviceDescriptor.ImplementationInstance
+    //                   ?? serviceDescriptor.ImplementationFactory?.Invoke(serviceProvider)
+    //                   ?? (serviceDescriptor.ImplementationType is not null ? ActivatorUtilities.CreateInstance(serviceProvider, serviceDescriptor.ImplementationType) : null);
 
-        if (serviceDescriptor.IsKeyedService)
-            instance ??= serviceDescriptor.KeyedImplementationInstance
-                         ?? serviceDescriptor.KeyedImplementationFactory?.Invoke(serviceProvider, serviceDescriptor.ServiceKey)
-                         ?? (serviceDescriptor.KeyedImplementationType is not null ? ActivatorUtilities.CreateInstance(serviceProvider, serviceDescriptor.KeyedImplementationType) : null);
+    //    if (serviceDescriptor.IsKeyedService)
+    //        instance ??= serviceDescriptor.KeyedImplementationInstance
+    //                     ?? serviceDescriptor.KeyedImplementationFactory?.Invoke(serviceProvider, serviceDescriptor.ServiceKey)
+    //                     ?? (serviceDescriptor.KeyedImplementationType is not null ? ActivatorUtilities.CreateInstance(serviceProvider, serviceDescriptor.KeyedImplementationType) : null);
 
-        AddServiceItems();
+    //    AddServiceItems();
 
-        return instance!;
+    //    return instance!;
 
-        void AddServiceItems()
-        {
-            if (instance is IHasServiceCollection hasServiceCollection)
-                hasServiceCollection.ServiceCollection = serviceProvider.GetService<IServiceCollection>()!;
+    //    void AddServiceItems()
+    //    {
+    //        if (instance is IServiceCollectionAccessor hasServiceCollection)
+    //            hasServiceCollection.ServiceCollection = serviceProvider.GetService<IServiceCollection>()!;
 
-            if (serviceProvider is IBlankServiceProvider) return;
+    //        if (serviceProvider is IBlankServiceProvider) return;
 
-            if (instance is IHasServiceProvider hasServiceProvider)
-                hasServiceProvider.ServiceProvider = serviceProvider;
+    //        if (instance is IHasServiceProvider hasServiceProvider)
+    //            hasServiceProvider.ServiceProvider = serviceProvider;
 
-            foreach (var serviceItemDecorator in serviceProvider.GetServices<IServiceCollectionItemDecorator>())
-                serviceItemDecorator.Decorate(serviceProvider, instance);
-        }
-    }
+    //        foreach (var serviceItemDecorator in serviceProvider.GetServices<IServiceCollectionItemDecorator>())
+    //            serviceItemDecorator.Decorate(serviceProvider, instance);
+    //    }
+    //}
 }

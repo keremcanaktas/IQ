@@ -1,4 +1,4 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+﻿using IQ.Mofy.Core.DependencyInjection.Descriptors;
 
 namespace IQ.Mofy.Core.Abstractions.Fundamentals.Configurations;
 

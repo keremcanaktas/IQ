@@ -1,6 +1,7 @@
 ﻿using IQ.Mofy.Core.Abstractions.App;
 using IQ.Mofy.Core.Abstractions.App.Steps;
-using IQ.Mofy.Core.Data.Annotations.DependencyInjection;
+using IQ.Mofy.Core.DependencyInjection.Annotations;
+using IQ.Mofy.Core.DependencyInjection.Extensions;
 using IQ.Mofy.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 

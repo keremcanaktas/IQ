@@ -1,11 +1,13 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
+﻿using IQ.Mofy.Core.DependencyInjection;
+using IQ.Mofy.Core.DependencyInjection.Adapters;
+using IQ.Mofy.Core.DependencyInjection.Extensions;
 using IQ.Mofy.Core.Extensions;
-using IQ.Mofy.Core.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using WebApplication = IQ.Mofy.Web.App.WebApplication;
@@ -110,10 +112,10 @@ public class WebApiApplication(WebApplicationBuilder webApplicationBuilder) : We
 
     protected virtual void ApplyServiceProviderFactory()
     {
-        var serviceProviderFactory = ServiceCollection.GetService<IServiceProviderFactory>();
+        var serviceProviderFactory = ServiceCollection.GetService(typeof(IServiceProviderFactory<>));
 
         if (serviceProviderFactory is not null)
-            HostApplicationBuilder.Host.UseServiceProviderFactory(serviceProviderFactory);
+            HostApplicationBuilder.Host.UseServiceProviderFactory(ServiceProviderFactoryAdapter.CreateOrDefault(serviceProviderFactory));
     }
 
     #endregion

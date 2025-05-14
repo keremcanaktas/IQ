@@ -1,4 +1,4 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+﻿using IQ.Mofy.Core.DependencyInjection.Descriptors;
 using IQ.Mofy.Data.Abstractions.Entities;
 using System.Linq.Expressions;
 

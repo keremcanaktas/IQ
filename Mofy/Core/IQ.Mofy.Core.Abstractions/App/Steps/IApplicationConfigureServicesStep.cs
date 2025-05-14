@@ -1,4 +1,5 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection.Core;
+﻿using IQ.Mofy.Core.DependencyInjection.Descriptors;
+using IQ.Mofy.Core.DependencyInjection.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IQ.Mofy.Core.Abstractions.App.Steps;

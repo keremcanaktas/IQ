@@ -1,4 +1,4 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
+﻿using IQ.Mofy.Core.DependencyInjection.Accessors;
 using IQ.Mofy.Core.Fundamentals.Disposable;
 using IQ.Mofy.Data.Abstractions.Entities;
 using IQ.Mofy.Data.Abstractions.Repositories;
@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace IQ.Mofy.Data.Repositories;
 
-public abstract class Repository : Disposable, IHasServiceProvider
+public abstract class Repository : Disposable, IServiceProviderAccessor
 {
     #region IHasServiceProvider
 

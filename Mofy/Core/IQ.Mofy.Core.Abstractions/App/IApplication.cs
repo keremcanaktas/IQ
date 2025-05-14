@@ -1,10 +1,10 @@
-﻿using IQ.Mofy.Core.Abstractions.DependencyInjection;
+﻿using IQ.Mofy.Core.DependencyInjection.Accessors;
 
 namespace IQ.Mofy.Core.Abstractions.App;
 
 public interface IApplication :
-    IHasReadonlyServiceCollection,
-    IHasReadonlyServiceProvider,
+    IServiceCollectionAccessor,
+    IServiceProviderAccessor,
     IAsyncDisposable,
     IDisposable
 {
