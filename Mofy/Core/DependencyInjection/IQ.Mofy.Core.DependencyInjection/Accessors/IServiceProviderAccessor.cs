@@ -2,5 +2,5 @@
 
 public interface IServiceProviderAccessor : IAccessor
 {
-    public IServiceProvider ServiceProvider { get; }
+    public IServiceProvider ServiceProvider { get; set; }
 }

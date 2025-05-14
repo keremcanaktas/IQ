@@ -1,23 +1,25 @@
-﻿namespace IQ.Mofy.Core.DependencyInjection.Decorators;
+﻿using IQ.Mofy.Core.DependencyInjection.Descriptors;
 
-public interface IServiceDecorator
+namespace IQ.Mofy.Core.DependencyInjection.Decorators;
+
+public interface IServiceDecorator : ISingletonInstance
 {
-    void Decorate(IServiceProvider serviceProvider, object? instance);
+    object? Decorate(IServiceProvider serviceProvider, object? instance);
 }
 
-public interface IServiceDecorator<in T> : IServiceDecorator
+public interface IServiceDecorator<T> : IServiceDecorator
 {
-    void Decorate(IServiceProvider serviceProvider, T instance);
+    T Decorate(IServiceProvider serviceProvider, T instance);
 }
 
 public abstract class ServiceDecorator<T> : IServiceDecorator<T>
 {
-    public void Decorate(IServiceProvider serviceProvider, object? instance)
+    public object? Decorate(IServiceProvider serviceProvider, object? instance)
     {
-        if (instance is not T @object) return;
+        if (instance is not T @object) return instance;
 
-        Decorate(serviceProvider, @object);
+        return Decorate(serviceProvider, @object);
     }
 
-    public abstract void Decorate(IServiceProvider serviceProvider, T instance);
+    public abstract T Decorate(IServiceProvider serviceProvider, T instance);
 }

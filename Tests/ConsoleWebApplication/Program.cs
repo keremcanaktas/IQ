@@ -2,6 +2,7 @@
 
 using ConsoleWebApplication;
 using IQ.Mofy.Core.App;
+using IQ.Mofy.Core.App.Steps;
 using IQ.Mofy.Web.Api.App;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

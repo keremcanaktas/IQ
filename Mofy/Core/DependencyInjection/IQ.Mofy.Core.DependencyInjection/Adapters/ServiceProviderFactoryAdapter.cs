@@ -23,5 +23,5 @@ public class ServiceProviderFactoryAdapter<TContainerBuilder>(IServiceProviderFa
 {
     public object CreateBuilder(IServiceCollection services) => serviceProviderFactory.CreateBuilder(services);
 
-    public IServiceProvider CreateServiceProvider(object containerBuilder) => serviceProviderFactory.CreateServiceProvider((TContainerBuilder)containerBuilder);
+    public IServiceProvider CreateServiceProvider(object containerBuilder) => new Providers.ServiceProvider(serviceProviderFactory.CreateServiceProvider((TContainerBuilder)containerBuilder));
 }
