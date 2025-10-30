@@ -1,4 +1,4 @@
-﻿using ConsoleWebApplication.Data;
+﻿using IQ.Mofy.Data.Abstractions.Entities;
 
 namespace ConsoleWebApplication;
 

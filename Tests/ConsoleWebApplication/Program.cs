@@ -1,32 +1,62 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using ConsoleWebApplication;
-using IQ.Mofy.Core.App;
 using IQ.Mofy.Core.App.Steps;
+using IQ.Mofy.Core.DependencyInjection.Decorators;
 using IQ.Mofy.Web.Api.App;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+using Microsoft.Extensions.Hosting;
 
 var application = new WebApiApplication();
+
 application.ServiceCollection.AddRegify();
+
+var httpContextFactoryDescriptor = application.ServiceCollection.FirstOrDefault(t => t.ServiceType == typeof(IHttpContextFactory));
+
+
+await application.BuildHostApplicationAsync();
+
+var hostedServiceDescriptor = application.ServiceCollection.FirstOrDefault(t => t.ServiceType == typeof(IHostedService));
 
 await application.RunAsync();
 
-
-
 public class ApplicationPostRunStep : ApplicationPostRunStep<WebApiApplication>
 {
+    public ApplicationPostRunStep()
+    {
+        Console.Out.Write("Created");
+    }
+
     public override Task OnPostRunAsync(WebApiApplication apiApplication)
     {
-        var serviceScope = apiApplication.ServiceProvider.CreateScope();
+        var hostedServices = apiApplication.ServiceProvider.GetServices<IHostedService>();
 
-        var carRepository = serviceScope.ServiceProvider.GetRequiredService<ICarRepository>();
+        var host = apiApplication.ServiceProvider.GetRequiredService<IHost>();
 
-        carRepository.DeleteRangeAsync([1]);
+        var b = host.GetType();
 
-        apiApplication.MapGet("/", async (ICarRepository carRepository) => await carRepository.GetListAsync(d => true));
+        var httpContextFactory = apiApplication.Services.GetService<IHttpContextFactory>();
 
+        var hostedService = apiApplication.ServiceProvider.GetRequiredService<IHostedService>();
+
+        apiApplication.MapGet("/", (IServiceProvider? serviceScopeFactory) =>
+        {
+            var scope = serviceScopeFactory.CreateScope();
+
+            return "test";
+
+            //var t = context.RequestServices.GetType();
+
+            //var c = applicationPostRunStep == this;
+
+            //return applicationPostRunStep.GetType().Name;
+        });
+
+
+
+        //ServiceProvider
 
 
         return Task.CompletedTask;
@@ -34,10 +64,12 @@ public class ApplicationPostRunStep : ApplicationPostRunStep<WebApiApplication>
 }
 
 
-public class Interceptor : DispatchProxy
+public class ContextAccessorDecorator : ServiceDecorator<IContextAccessor>
 {
-    protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+    public override IContextAccessor Decorate(IServiceProvider serviceProvider, IContextAccessor service)
     {
-        throw new NotImplementedException();
+        service.Context = serviceProvider.GetRequiredService<IContext>();
+
+        return service;
     }
 }

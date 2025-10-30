@@ -1,8 +1,4 @@
-﻿using IQ.Mofy.Core.DependencyInjection;
-using IQ.Mofy.Core.DependencyInjection.Adapters;
-using IQ.Mofy.Core.DependencyInjection.Extensions;
-using IQ.Mofy.Core.Extensions;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
@@ -40,12 +36,13 @@ public class WebApiApplication(WebApplicationBuilder webApplicationBuilder) : We
         return base.OnInitializingAsync();
     }
 
-    protected override Task CreateServiceProviderAsync()
+    protected override Task<IServiceProvider> CreateServiceProviderAsync(IServiceProviderFactory<object> factory)
     {
-        ApplyServiceProviderFactory();
+        HostApplicationBuilder.Host.UseServiceProviderFactory(factory);
+
         HostApplication ??= HostApplicationBuilder.Build();
-        ServiceProvider = HostApplication.Services;
-        return Task.CompletedTask;
+
+        return Task.FromResult(HostApplication.Services);
     }
 
     #endregion
@@ -105,18 +102,6 @@ public class WebApiApplication(WebApplicationBuilder webApplicationBuilder) : We
     IApplicationBuilder IEndpointRouteBuilder.CreateApplicationBuilder() => EndpointRouteBuilder.CreateApplicationBuilder();
 
     ICollection<EndpointDataSource> IEndpointRouteBuilder.DataSources => EndpointRouteBuilder.DataSources;
-
-    #endregion
-
-    #region Protecteds
-
-    protected virtual void ApplyServiceProviderFactory()
-    {
-        var serviceProviderFactory = ServiceCollection.GetService(typeof(IServiceProviderFactory<>));
-
-        if (serviceProviderFactory is not null)
-            HostApplicationBuilder.Host.UseServiceProviderFactory(ServiceProviderFactoryAdapter.CreateOrDefault(serviceProviderFactory));
-    }
 
     #endregion
 }

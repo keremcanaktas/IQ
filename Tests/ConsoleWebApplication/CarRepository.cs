@@ -1,28 +1,23 @@
-﻿using ConsoleWebApplication.Data.Integer;
-using IQ.Mofy.Core.Abstractions.App;
-using IQ.Mofy.Core.Data.Annotations.DependencyInjection;
+﻿using IQ.Mofy.Core.Abstractions.App;
+using IQ.Mofy.Core.DependencyInjection.Annotations;
+using IQ.Mofy.Data.Repositories;
 using System.Linq.Expressions;
 
 namespace ConsoleWebApplication;
 
-public class CarRepository : EfCoreRepository<Car>, ICarRepository
+public class CarRepository : ReadOnlyRepository<Car>, ICarRepository
 {
-    public override Task<Car?> GetAsync(int id)
+    public override Task<Car?> GetAsync(Expression<Func<Car, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var car = new Car
         {
-            Id = id
+            Id = 1
         };
 
         return Task.FromResult<Car?>(car);
     }
 
-    public override Task<List<Car>> GetListAsync(IEnumerable<int> ids)
-    {
-        return new(() => ids.Select(id => new Car { Id = id }).ToList());
-    }
-
-    public override Task<List<Car>> GetListAsync(Expression<Func<Car, bool>> predicate)
+    public override Task<List<Car>> GetListAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new List<Car>
         {
@@ -36,19 +31,15 @@ public class CarRepository : EfCoreRepository<Car>, ICarRepository
             new() { Id = 8, Name = "Nissan" },
             new() { Id = 9, Name = "Volkswagen" },
             new() { Id = 10, Name = "Hyundai" }
-        }.Where(predicate.Compile()).ToList());
+        });
     }
 
-    protected override void ReleaseManagedResources()
-    {
-        base.ReleaseManagedResources();
-    }
+    public override async Task<List<Car>> GetListAsync(Expression<Func<Car, bool>> predicate, CancellationToken cancellationToken = default) => (await GetListAsync(cancellationToken)).Where(predicate.Compile()).ToList();
+
+    public IContext Context { get; set; } = null!;
 }
+
 [ServiceTypes(nameof(IApplication))]
 public class MercedesCarRepository : CarRepository, IMercedesCarRepository
 {
-    protected override void ReleaseManagedResources()
-    {
-        base.ReleaseManagedResources();
-    }
 }

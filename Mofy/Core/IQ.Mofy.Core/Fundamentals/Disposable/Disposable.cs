@@ -2,21 +2,21 @@
 
 public class Disposable : IDisposable
 {
-    private bool _disposedValue;
-    
+    private bool _disposed;
+
     public void Dispose()
     {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
-    
+
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposedValue) return;
+        if (_disposed) return;
         if (disposing)
             ReleaseManagedResources();
         ReleaseUnmanagedResources();
-        _disposedValue = true;
+        _disposed = true;
     }
 
     #region ReleaseResources

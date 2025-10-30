@@ -6,14 +6,14 @@ namespace IQ.Mofy.Data.Abstractions.Repositories;
 
 public interface IRepository : IScoped;
 
-public interface ICreateOnlyRepository<T> : IRepository
+public interface ICreateOnlyRepository<in T> : IRepository
     where T : IEntity
 {
     Task CreateAsync(T entity, CancellationToken cancellationToken = default);
     Task CreateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IReadOnlyRepository<T> : IRepository 
+public interface IReadOnlyRepository<T> : IRepository
     where T : IEntity
 {
     Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
@@ -35,21 +35,21 @@ public interface IReadOnlyRepository<T, in TKey> : IReadOnlyRepository<T>
 public interface IQueryableRepository<T> : IReadOnlyRepository<T>, IQueryable<T>
     where T : IEntity;
 
-public interface IUpdateOnlyRepository<T> : IRepository
+public interface IUpdateOnlyRepository<in T> : IRepository
     where T : IEntity
 {
     Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
     Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IDeleteOnlyRepository<T> : IRepository
+public interface IDeleteOnlyRepository<in T> : IRepository
     where T : IEntity
 {
     Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
     Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IDeleteOnlyRepository<T, TKey> : IDeleteOnlyRepository<T>
+public interface IDeleteOnlyRepository<in T, in TKey> : IDeleteOnlyRepository<T>
     where T : IEntity<TKey>
     where TKey : IEquatable<TKey>
 {
@@ -62,34 +62,34 @@ public interface IDeleteOnlyRepository<T, TKey> : IDeleteOnlyRepository<T>
 public interface IRepository<T> : ICreateOnlyRepository<T>, IReadOnlyRepository<T>, IUpdateOnlyRepository<T>, IDeleteOnlyRepository<T>
     where T : IEntity;
 
-public interface IRepository<T, TKey> : IRepository<T>, IReadOnlyRepository<T, TKey>, IDeleteOnlyRepository<T, TKey>
+public interface IRepository<T, in TKey> : IRepository<T>, IReadOnlyRepository<T, TKey>, IDeleteOnlyRepository<T, TKey>
     where T : IEntity<TKey>
     where TKey : IEquatable<TKey>;
 
 
 
-public interface IImmediateCreateOnlyRepository<T> : ICreateOnlyRepository<T> 
+public interface IImmediateCreateOnlyRepository<in T> : ICreateOnlyRepository<T>
     where T : IEntity
 {
     new Task CreateAsync(T entity, CancellationToken cancellationToken = default);
     new Task CreateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IImmediateUpdateOnlyRepository<T> : IUpdateOnlyRepository<T>
+public interface IImmediateUpdateOnlyRepository<in T> : IUpdateOnlyRepository<T>
     where T : IEntity
 {
     new Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
     new Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IImmediateDeleteOnlyRepository<T> : IDeleteOnlyRepository<T>
+public interface IImmediateDeleteOnlyRepository<in T> : IDeleteOnlyRepository<T>
     where T : IEntity
 {
     new Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
     new Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }
 
-public interface IImmediateDeleteOnlyRepository<T, TKey> : IImmediateDeleteOnlyRepository<T>, IDeleteOnlyRepository<T, TKey>
+public interface IImmediateDeleteOnlyRepository<in T, in TKey> : IImmediateDeleteOnlyRepository<T>, IDeleteOnlyRepository<T, TKey>
     where T : IEntity<TKey>
     where TKey : IEquatable<TKey>
 {
@@ -97,7 +97,7 @@ public interface IImmediateDeleteOnlyRepository<T, TKey> : IImmediateDeleteOnlyR
     new Task DeleteRangeAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default);
 }
 
-public interface IImmediateRepository<T> : IImmediateCreateOnlyRepository<T>, IImmediateUpdateOnlyRepository<T>, IImmediateDeleteOnlyRepository<T>
+public interface IImmediateRepository<in T> : IImmediateCreateOnlyRepository<T>, IImmediateUpdateOnlyRepository<T>, IImmediateDeleteOnlyRepository<T>
     where T : IEntity;
 
 

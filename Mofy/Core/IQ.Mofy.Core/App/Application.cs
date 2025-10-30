@@ -1,7 +1,7 @@
 ﻿using IQ.Mofy.Core.Abstractions.App;
 using IQ.Mofy.Core.Abstractions.App.Steps;
-using IQ.Mofy.Core.DependencyInjection.Accessors;
 using IQ.Mofy.Core.DependencyInjection.Adapters;
+using IQ.Mofy.Core.DependencyInjection.Decorators;
 using IQ.Mofy.Core.DependencyInjection.Extensions;
 using IQ.Mofy.Core.Fundamentals.Disposable;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,10 +12,7 @@ using System.Diagnostics;
 
 namespace IQ.Mofy.Core.App;
 
-public class Application : AsyncDisposable,
-    IApplication,
-    IServiceCollectionAccessor,
-    IServiceProviderAccessor
+public class Application : AsyncDisposable, IApplication
 {
     #region Ctor
 
@@ -51,7 +48,11 @@ public class Application : AsyncDisposable,
 
         await OnConfigureServicesAsync();
 
-        await CreateServiceProviderAsync();
+        var serviceProviderFactory = await CreateServiceProviderFactoryAsync();
+
+        var serviceProvider = await CreateServiceProviderAsync(serviceProviderFactory);
+
+        await ApplyServiceProviderAsync(serviceProvider);
 
         await OnPostRunAsync();
     }
@@ -69,11 +70,13 @@ public class Application : AsyncDisposable,
 
     #region DependencyInjection
 
-    protected virtual Task CreateServiceProviderAsync()
-    {
-        var serviceProviderFactory = ServiceProviderFactoryAdapter.CreateOrDefault(ServiceCollection.GetService(typeof(IServiceProviderFactory<>)));
+    protected virtual Task<IServiceProviderFactory<object>> CreateServiceProviderFactoryAsync() => Task.FromResult<IServiceProviderFactory<object>>(new WrappedServiceProviderFactoryDecorator<object>(ServiceProviderFactoryAdapter.CreateOrDefault(ServiceCollection.GetService(typeof(IServiceProviderFactory<>)))));
 
-        ServiceProvider = serviceProviderFactory.CreateServiceProvider(serviceProviderFactory.CreateBuilder(ServiceCollection));
+    protected virtual Task<IServiceProvider> CreateServiceProviderAsync(IServiceProviderFactory<object> serviceProviderFactory) => Task.FromResult(serviceProviderFactory.CreateServiceProvider(serviceProviderFactory.CreateBuilder(ServiceCollection)));
+
+    protected virtual Task ApplyServiceProviderAsync(IServiceProvider serviceProvider)
+    {
+        ServiceProvider = serviceProvider;
 
         return Task.CompletedTask;
     }

@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
             _ => self.GetServices(serviceType)
         };
 
-        return services.FirstOrDefault();
+        return services.LastOrDefault();
     }
 
     public static T GetRequiredService<T>(this IServiceCollection self) => (T)self.GetRequiredService(typeof(T));
@@ -26,9 +26,15 @@ public static class ServiceCollectionExtensions
 
     public static IEnumerable<T> GetServices<T>(this IServiceCollection self) => self.GetServices(typeof(T)).Cast<T>();
 
-    public static ICollection<T> GetServiceCollection<T>(this IServiceCollection self) => [.. self.GetServices<T>()];
+    public static IEnumerable<T> GetAllServices<T>(this IServiceCollection self) => self.GetAllServices(typeof(T)).Cast<T>();
 
     public static IEnumerable<object?> GetServices(this IServiceCollection self, Type serviceType) => self.GetServices(sd => sd.ServiceType == serviceType);
 
+    public static IEnumerable<object?> GetAllServices(this IServiceCollection self, Type serviceType) => self.GetServices(sd => serviceType.IsAssignableFrom(sd.ServiceType));
+
     public static IEnumerable<object?> GetServices(this IServiceCollection self, Func<ServiceDescriptor, bool> predicate) => self.Where(predicate).Select(serviceDescriptor => serviceDescriptor.ProduceImplementationInstance());
+
+    public static ICollection<T> GetServiceCollection<T>(this IServiceCollection self) => [.. self.GetServices<T>()];
+
+    public static ICollection<T> GetAllServiceCollection<T>(this IServiceCollection self) => [.. self.GetAllServices<T>()];
 }

@@ -9,13 +9,10 @@ public class ServiceProviderFactoryAdapter
     {
         if (serviceProviderFactory is null) return new ServiceProviderFactoryAdapter<IServiceCollection>(new DefaultServiceProviderFactory());
 
-        return (IServiceProviderFactory<object>)Activator.CreateInstance(typeof(ServiceProviderFactoryAdapter<>).MakeGenericType(GetBuilderType(serviceProviderFactory.GetType())!), [serviceProviderFactory])!;
+        return (IServiceProviderFactory<object>)Activator.CreateInstance(typeof(ServiceProviderFactoryAdapter<>).MakeGenericType(GetBuilderType(serviceProviderFactory.GetType())!), serviceProviderFactory)!;
     }
 
-    private static Type? GetBuilderType(Type serviceProviderFactoryType)
-    {
-        return serviceProviderFactoryType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IServiceProviderFactory<>)).SelectMany(i => i.GetGenericArguments()).FirstOrDefault();
-    }
+    private static Type? GetBuilderType(Type serviceProviderFactoryType) => serviceProviderFactoryType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IServiceProviderFactory<>)).SelectMany(i => i.GetGenericArguments()).FirstOrDefault();
 }
 
 [DebuggerStepThrough]
@@ -23,5 +20,5 @@ public class ServiceProviderFactoryAdapter<TContainerBuilder>(IServiceProviderFa
 {
     public object CreateBuilder(IServiceCollection services) => serviceProviderFactory.CreateBuilder(services);
 
-    public IServiceProvider CreateServiceProvider(object containerBuilder) => new Providers.ServiceProvider(serviceProviderFactory.CreateServiceProvider((TContainerBuilder)containerBuilder));
+    public IServiceProvider CreateServiceProvider(object containerBuilder) => serviceProviderFactory.CreateServiceProvider((TContainerBuilder)containerBuilder);
 }

@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Mofy\Configuration\IQ.Mofy.Configuration\IQ.Mofy.Configuration.csproj" />
+      <ProjectReference Include="..\..\Mofy\Data\IQ.Mofy.Data\IQ.Mofy.Data.csproj" />
       <ProjectReference Include="..\..\Mofy\Regify\IQ.Mofy.Regify\IQ.Mofy.Regify.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
       <ProjectReference Include="..\..\Mofy\Web\Api\IQ.Mofy.Web.Api\IQ.Mofy.Web.Api.csproj" />
     </ItemGroup>

@@ -57,6 +57,7 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
                 (serviceTypesAttribute, serviceTypeSymbol) => new ServiceCollectionItemDescriptor
                 {
                     TypeSymbol = typeSymbol,
+                    ServiceTypeSymbol = serviceTypeSymbol as ITypeSymbol,
                     ServiceTypeName = serviceTypeSymbol!.ToDisplayString(),
                     ImplementationTypeName = typeSymbol.ToDisplayString(),
                     Key = serviceTypesAttribute.Key,
@@ -93,7 +94,7 @@ public class ServiceCollectionItemsGenerator : Generator, IIncrementalGenerator
         foreach (var type in serviceTypes)
             yield return type;
 
-        if(serviceSelectorType == ServiceSelectorType.None) yield break;
+        if (serviceSelectorType == ServiceSelectorType.None) yield break;
 
         foreach (var requiredService in typeSymbol.AllInterfaces.Where(i => i.Interfaces.Any(ii => ii.ToDisplayString() == Constants.RequiredServiceName)))
             yield return requiredService;

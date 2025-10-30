@@ -11,13 +11,11 @@ public static class Constants
     internal const string LifeStyleAttributeName = "IQ.Mofy.Core.DependencyInjection.Annotations.LifeStyleAttribute";
 
     public const string ServiceCollectionExtensionsSourceCode = """
-                                                                using IQ.Mofy.Core.Extensions.DependencyInjection;
-
-                                                                namespace IQ.Mofy.Core.App;
+                                                                namespace Microsoft.Extensions.DependencyInjection;
 
                                                                 public static class ServiceCollectionExtensions
                                                                 {
-                                                                    public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddRegify(this Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+                                                                    public static IServiceCollection AddRegify(this IServiceCollection services)
                                                                     {
                                                                         {Registrations}
                                                                         return services;

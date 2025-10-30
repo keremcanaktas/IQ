@@ -9,7 +9,7 @@ public class AsyncDisposable : Disposable, IAsyncDisposable
         await ReleaseManagedResourcesAsync();
         await ReleaseUnmanagedResourcesAsync();
     }
-    
+
     public async ValueTask DisposeAsync()
     {
         await DisposeAsyncCore().ConfigureAwait(false);
@@ -19,7 +19,7 @@ public class AsyncDisposable : Disposable, IAsyncDisposable
     }
 
     #endregion
-    
+
     #region ReleaseResources
 
     protected virtual ValueTask ReleaseManagedResourcesAsync() => ValueTask.CompletedTask;
@@ -27,4 +27,6 @@ public class AsyncDisposable : Disposable, IAsyncDisposable
     protected virtual ValueTask ReleaseUnmanagedResourcesAsync() => ValueTask.CompletedTask;
 
     #endregion
+
+    ~AsyncDisposable() => Dispose(disposing: false);
 }
